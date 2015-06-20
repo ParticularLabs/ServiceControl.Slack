@@ -31,6 +31,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="NServiceBus.Core">
+      <HintPath>..\packages\NServiceBus.5.2.2\lib\net45\NServiceBus.Core.dll</HintPath>
+    </Reference>
     <Reference Include="ServiceControl.Contracts">
       <HintPath>..\packages\ServiceControl.Contracts.1.2.0\lib\net45\ServiceControl.Contracts.dll</HintPath>
     </Reference>
@@ -43,6 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FailedEndpointHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
