@@ -56,8 +56,11 @@
 
         public Task Send(string destination, string message)
         {
-            if (socket == null)
+            if (socket == null || socket.State != WebSocketState.Open)
+            {
+                Log.Error("Socket not open so cannot send message '{message}' to {destination}.", message, destination);
                 return Task.FromResult(0);
+            }
 
             if (destination == null)
                 return Task.FromResult(0);
@@ -127,6 +130,12 @@
                 var start = api.RtmStart();
                 if (!start.Ok)
                 {
+                    if (start.Error == "invalid_auth")
+                    {
+                        Log.Error("Invalid bot token.");
+                        return;
+                    }
+
                     Log.Warning("Unable to start connection with Slack Adapter. Retrying");
                     await Task.Delay(TimeSpan.FromSeconds(1));
                     continue;
@@ -152,7 +161,10 @@
             socket.Error += SocketOnError;
             socket.MessageReceived += SocketOnMessage;
 
+            var openingTcs = new TaskCompletionSource<object>();
+            socket.Opened += (s, e) => openingTcs.SetResult(null);
             socket.Open();
+            await openingTcs.Task;
 
             Log.Information("Slack socket connected");
         }
