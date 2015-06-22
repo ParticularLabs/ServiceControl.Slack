@@ -34,6 +34,7 @@ class ProgramService : ServiceBase
             var busConfiguration = new BusConfiguration();
             busConfiguration.EndpointName("ServiceControl.Slack");
             busConfiguration.UseSerialization<JsonSerializer>();
+            busConfiguration.Conventions().DefiningEventsAs(t => typeof(IEvent).IsAssignableFrom(t) || t.Namespace != null && t.Namespace.StartsWith("ServiceControl.Contracts"));
             busConfiguration.DefineCriticalErrorAction(OnCriticalError);
 
             busConfiguration.UsePersistence<InMemoryPersistence>();

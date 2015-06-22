@@ -84,8 +84,9 @@
     <Compile Include="Api\SlackAdapter.cs" />
     <Compile Include="Api\SlackAPI.cs" />
     <Compile Include="Api\SlackAPIData.cs" />
-    <Compile Include="FailedEndpointHandler.cs" />
+    <Compile Include="HeartbeatStoppedHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SlackNotifier.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
