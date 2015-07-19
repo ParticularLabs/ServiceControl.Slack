@@ -14,7 +14,7 @@
 
         public void Handle(HeartbeatStopped message)
         {
-            notifier.Notify(string.Format("Endpoint {0} seems to have stopped sending heartbeats", message.EndpointName));
+            notifier.Notify(string.Format("Endpoint `{0}` have stopped sending heartbeats", message.EndpointName));
         }
     }
 }
