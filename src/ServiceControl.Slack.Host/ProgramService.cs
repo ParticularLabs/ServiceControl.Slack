@@ -3,13 +3,11 @@ using System.Diagnostics;
 using System.ServiceProcess;
 using NServiceBus;
 using NServiceBus.Logging;
+using ServiceControl.Slack;
+using ServiceControl.Slack.Api;
 
 class ProgramService : ServiceBase
 {
-    IBus bus;
-
-    static ILog logger = LogManager.GetLogger<ProgramService>();
-
     static void Main()
     {
         using (var service = new ProgramService())
@@ -44,7 +42,23 @@ class ProgramService : ServiceBase
                 busConfiguration.EnableInstallers();
             }
 
+            var token = Environment.GetEnvironmentVariable("ServiceControl.Slack.Token", EnvironmentVariableTarget.User);
+
+            if (token == null)
+            {
+                throw new Exception("Couldn't find a slack api token, please add a user env variable named `ServiceControl.Slack.Token`");
+            }
+
+            slackAdapter = new SlackAdapter(token);
+
+            var roomName = Environment.GetEnvironmentVariable("ServiceControl.Slack.RoomName", EnvironmentVariableTarget.User) ?? "servicecontrol";
+          
+            busConfiguration.RegisterComponents(c=>c.RegisterSingleton(new SlackNotifier(slackAdapter,roomName)));
+
             var startableBus = Bus.Create(busConfiguration);
+
+            slackAdapter.Start().GetAwaiter().GetResult();
+
             bus = startableBus.Start();
         }
         catch (Exception exception)
@@ -52,6 +66,7 @@ class ProgramService : ServiceBase
             OnCriticalError("Failed to start the bus.", exception);
         }
     }
+
 
     void OnCriticalError(string errorMessage, Exception exception)
     {
@@ -62,10 +77,20 @@ class ProgramService : ServiceBase
 
     protected override void OnStop()
     {
+        if (slackAdapter != null)
+        {
+            slackAdapter.Stop().GetAwaiter().GetResult();
+        }
+
         if (bus != null)
         {
             bus.Dispose();
         }
     }
+
+    IBus bus;
+    SlackAdapter slackAdapter;
+
+    static ILog logger = LogManager.GetLogger<ProgramService>();
 
 }

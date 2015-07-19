@@ -10,13 +10,13 @@
         [Explicit]
         public async void PostMessage()
         {
-            var token = Environment.GetEnvironmentVariable("ServiceControl.Slack.Token",EnvironmentVariableTarget.User);
-          
+            var token = Environment.GetEnvironmentVariable("ServiceControl.Slack.Token", EnvironmentVariableTarget.User);
+
             if (token == null)
             {
                 throw new Exception("Couldn't find an slack api token, please add a user env variable named `ServiceControl.Slack.Token`");
             }
-           
+
             var api = new SlackAdapter(token);
 
             await api.Start();
