@@ -1,5 +1,7 @@
 # ServiceControl.Slack
-Integrates with ServiceControl and provided notifications in Slack for failed messages, missing heartbeats etc
+Integrates with ServiceControl and provided notifications in Slack for failed messages, missing heartbeats etc.
+
+At the moment only notifications for missing heartbeats are implemented
 
 ## Hosting
 
@@ -8,4 +10,12 @@ The integration comes with its own host but you can choose to host in in any end
 ### Installing the host as a windows service
 
 `PS C:\Users\Administrator> sc.exe create ServiceControl.Slack binpath= "C:\Program Files (x86)\ServiceControl.Slack\ServiceControl.Slack.Host.exe"`
+
+### Configuration
+
+1. You need to create a bot integration in Slack and provide the apitoken via a user environment variable called `ServiceControl.Slack.Token`.
+
+2. You need to specify the room where the notifications will be posted using a user environment variable called `ServiceControl.Slack.RoomName` 
+
+3. If installing on a separate machine from where ServiceControl is running you need to modify the endpoint mappings in `ServiceControl.Slack.Host.exe.config` accordingly
 
