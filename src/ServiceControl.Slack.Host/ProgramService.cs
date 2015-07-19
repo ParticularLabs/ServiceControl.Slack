@@ -38,7 +38,7 @@ class ProgramService : ServiceBase
             busConfiguration.UsePersistence<InMemoryPersistence>();
 
             if (Environment.UserInteractive && Debugger.IsAttached)
-            {          
+            {
                 busConfiguration.EnableInstallers();
             }
 
@@ -52,14 +52,16 @@ class ProgramService : ServiceBase
             slackAdapter = new SlackAdapter(token);
 
             var roomName = Environment.GetEnvironmentVariable("ServiceControl.Slack.RoomName", EnvironmentVariableTarget.User) ?? "servicecontrol";
-          
-            busConfiguration.RegisterComponents(c=>c.RegisterSingleton(new SlackNotifier(slackAdapter,roomName)));
+
+            busConfiguration.RegisterComponents(c => c.RegisterSingleton(new SlackNotifier(slackAdapter, roomName)));
 
             var startableBus = Bus.Create(busConfiguration);
 
             slackAdapter.Start().GetAwaiter().GetResult();
 
             bus = startableBus.Start();
+
+            logger.InfoFormat("Integration is now active, notifications will be feed into room '{0}'", roomName);
         }
         catch (Exception exception)
         {
