@@ -7,7 +7,7 @@ class ConfigErrorQueue : IProvideConfiguration<MessageForwardingInCaseOfFaultCon
     {
         return new MessageForwardingInCaseOfFaultConfig
                {
-                   ErrorQueue = "slackintegration.error"
+                   ErrorQueue = "servicecontrol.slack.error"
                };
     }
 }

@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.Linq;
 using System.ServiceProcess;
 using NServiceBus;
 using NServiceBus.Logging;
@@ -37,10 +38,7 @@ class ProgramService : ServiceBase
 
             busConfiguration.UsePersistence<InMemoryPersistence>();
 
-            if (Environment.UserInteractive && Debugger.IsAttached)
-            {
-                busConfiguration.EnableInstallers();
-            }
+            busConfiguration.EnableInstallers();
 
             var token = Environment.GetEnvironmentVariable("ServiceControl.Slack.Token", EnvironmentVariableTarget.User);
 

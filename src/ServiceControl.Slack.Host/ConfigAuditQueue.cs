@@ -7,7 +7,7 @@ class ConfigAuditQueue : IProvideConfiguration<AuditConfig>
     {
         return new AuditConfig
                {
-                   QueueName = "slackintegration.audit"
+                   QueueName = "servicecontrol.slack.audit"
                };
     }
 }
