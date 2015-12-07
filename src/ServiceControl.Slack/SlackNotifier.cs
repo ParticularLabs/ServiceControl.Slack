@@ -1,21 +1,25 @@
 ﻿namespace ServiceControl.Slack
 {
-    using ServiceControl.Slack.Api;
+    using global::Slack.Webhooks;
 
     public class SlackNotifier
     {
-        readonly SlackAdapter adapter;
-        readonly string room;
+        readonly SlackClient _client;
+        readonly string _channel;
 
-        public SlackNotifier(SlackAdapter adapter, string room)
+        public SlackNotifier(string webhookUrl, string channel = null)
         {
-            this.adapter = adapter;
-            this.room = room;
+            _client = new SlackClient(webhookUrl);
+            _channel = channel;
         }
 
         public void Notify(string message)
         {
-            adapter.Send(room, message).GetAwaiter().GetResult();
+            _client.Post(new SlackMessage
+            {
+                Channel = _channel,
+                Text = message
+            });
         }
     }
 }

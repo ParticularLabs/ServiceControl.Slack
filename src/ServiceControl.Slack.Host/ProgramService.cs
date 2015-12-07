@@ -3,7 +3,6 @@ using System.ServiceProcess;
 using NServiceBus;
 using NServiceBus.Logging;
 using ServiceControl.Slack;
-using ServiceControl.Slack.Api;
 
 class ProgramService : ServiceBase
 {
@@ -45,15 +44,11 @@ class ProgramService : ServiceBase
                 throw new Exception("Couldn't find a slack api token, please add a user env variable named `ServiceControl.Slack.Token`");
             }
 
-            slackAdapter = new SlackAdapter(token);
+            var roomName = Environment.GetEnvironmentVariable("ServiceControl.Slack.RoomName", EnvironmentVariableTarget.User);
 
-            var roomName = Environment.GetEnvironmentVariable("ServiceControl.Slack.RoomName", EnvironmentVariableTarget.User) ?? "servicecontrol";
-
-            busConfiguration.RegisterComponents(c => c.RegisterSingleton(new SlackNotifier(slackAdapter, roomName)));
+            busConfiguration.RegisterComponents(c => c.RegisterSingleton(new SlackNotifier(token, roomName)));
 
             var startableBus = Bus.Create(busConfiguration);
-
-            slackAdapter.Start().GetAwaiter().GetResult();
 
             bus = startableBus.Start();
 
@@ -75,11 +70,6 @@ class ProgramService : ServiceBase
 
     protected override void OnStop()
     {
-        if (slackAdapter != null)
-        {
-            slackAdapter.Stop().GetAwaiter().GetResult();
-        }
-
         if (bus != null)
         {
             bus.Dispose();
@@ -87,7 +77,6 @@ class ProgramService : ServiceBase
     }
 
     IBus bus;
-    SlackAdapter slackAdapter;
 
     static ILog logger = LogManager.GetLogger<ProgramService>();
 
